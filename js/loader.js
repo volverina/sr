@@ -28,3 +28,16 @@ export const loadAudio = (path) => {
 }
 
 
+export const loadVideo = (path) => {
+	return new Promise( (resolve, reject) => {
+		const video = document.createElement("video");
+		video.addEventListener("loadeddata", () => {
+			video.setAttribute("playsinline", "");
+			resolve(video);
+		});
+		video.src = path;
+	});
+}
+
+
+
