@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+    		<script src="../js/aframe/aframe.min.js"></script>
+    		<script src="../js/arjs/aframe-ar.js"></script>
+	</head>
+	<body>
+		<a-scene embedded arjs>
+			<a-marker preset="hiro">
+				<a-entity rotation="-90 0 0" scale="0.2 0.2 0.2">
+					<!--<a-sky color="grey"></a-sky>-->
+					<a-torus position="-2 1 -5" color="green" radius="1.2"
+						animation="property: components.material.material.color; type: color; from: green; to: red; loop: true; dur: 10000"></a-torus>
+					<a-plane width="7" height="7" rotation="-55 0 0" position="-2 -2 -5" color="white"
+						src="puppy.jpg" ></a-plane>
+					<a-cylinder color="yellow" height="2" radius="0.05" position="-2 -1 -5"></a-cylinder>
+					<a-cylinder color="blue" height="2" radius="0.05" position="-3 -1 -5"></a-cylinder>
+					<a-torus-knot color="orange" radius="1.2" position="-3 1 -5" 
+						animation="property: rotation; to: 360 0 0; loop: true; dur: 3000"></a-torus-knot>
+					<a-plane width="9" height="2" position="3 1 -9"></a-plane>
+					<a-text value="Вітаємо у браузерній VR!" font="../fonts/custom-msdf.json" negate="false" color="black"
+						 width="10" position="-0.5 0.5 -9" scale="1.5 1.5 1.5"></a-text>
+					<a-text value="Вітаємо у браузерній VR!" font="../fonts/BOOKOS.TTF-msdf.json" negate="false" color="black" animation="property: position; to: -5 1.5 -9; loop: true; dur: 6000"
+						 width="10" position="-0.5 1.5 -9" scale="1.5 1.5 1.5"></a-text>
+					<a-text value="Вітаємо у браузерній VR!" font="../fonts/arial-msdf.json" negate="false" color="black"
+		animation="property: scale; from: 1 1 1; to: 2 2 2; loop: true; dur: 2000"				 
+		width="10" position="-0.5 2.5 -9" scale="1.5 1.5 1.5"></a-text>
+					<a-sphere position="3 2 -6" radius=2 src="earth.jpg" animation="property: rotation; to: 0 360 360; loop: true; dur: 6000"></a-sphere>
+					<a-sphere position="3 4 -6" radius=2 src="https://i.imgur.com/HOSHs29.jpeg" animation="property: rotation; to: 0 360 360; loop: true; dur: 6000"></a-sphere>
+				<a-entity>
+			</a-marker>
+			<a-entity camera></a-entity>
+		</a-scene>
+	</body>
+</html>
+
+<!---
+	center - (0 0)
+	left, up - (-0.5 0.5)
+	left, down - (-0.5 -0.5)
+	right, up - (0.5 0.5)
+	right, down - (0.5 -0.5)
+
+ --->
