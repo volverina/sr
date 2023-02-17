@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+    		<script src="../js/aframe/aframe.min.js"></script>
+    		<script src="../js/arjs/aframe-ar.js"></script>
+		<script src="https://unpkg.com/aframe-globe-component"></script>
+    		<script src="hello.js"></script>
+	</head>
+	<body>
+		<!--
+		<a-scene embedded arjs='sourceType: image; sourceUrl:mockpicture.png;'>
+		<a-scene embedded arjs='sourceType: video; sourceUrl:www_screencapture_com_2023-2-17_12_42.mp4;'>
+		-->
+		<a-scene embedded arjs="debugUIEnabled: false; debug: false; ">
+<!--
+			<a-marker preset="hiro">
+				<a-entity rotation="90 0 0" scale="0.5 0.5 0.5">
+					<a-box color="tomato" position="0 0 0"></a-box>
+					<a-box color="white" position="-1 0 0"></a-box>
+					<a-box color="black" position="+1 0 0"></a-box>
+					<a-box color="red" position="0 +1 0"></a-box>
+					<a-box color="green" position="0 -1 0"></a-box>
+				</a-entity>
+			</a-marker>
+
+			<a-marker preset="kanji">
+				<a-entity rotation="90 0 0" scale="0.5 0.5 0.5">
+				<a-entity geometry="primitive: sphere; radius: 1.5"
+				          light="type: point; color: white; intensity: 2"
+				          material="color: white; shader: flat; src: HOSHs29.jpeg"
+				          position="0 0 -2"></a-entity>
+					<a-sphere color="tomato" position="0 0 0" radius="0.5"></a-sphere>
+					<a-sphere color="white" position="-1 0 0" radius="0.5"></a-sphere>
+					<a-sphere hello-world color="black" position="+1 0 0" radius="0.5"></a-sphere>
+					<a-sphere color="red" position="0 +1 0" radius="0.5"></a-sphere>
+					<a-sphere my-component="arrayProperty: 1, 2, 3;" color="green" position="0 -1 0" radius="0.5"></a-sphere>
+				</a-entity>
+				<a-entity hello-world my-component="integerProperty: -1;" ></a-entity>
+			</a-marker>
+
+-->
+			<a-marker type="pattern" url="pattern-marker12.patt">
+					<a-box color="blue" position="0 0 0"></a-box>
+			</a-marker>
+
+			<a-entity camera></a-entity>
+		</a-scene>
+	</body>
+</html>
+
+<!---
+	center - (0 0)
+	left, up - (-0.5 0.5)
+	left, down - (-0.5 -0.5)
+	right, up - (0.5 0.5)
+	right, down - (0.5 -0.5)
+
+ --->
