@@ -2,10 +2,70 @@ import { MindARThree } from 'mindar-image-three';
 import * as THREE from 'three';
 import {CSS3DObject, CSS3DRenderer} from "three/addons/renderers/CSS3DRenderer.js";
 
+/*
+https://www.youtube.com/watch?v=TFJ-fD6soE4
+https://youtu.be/TFJ-fD6soE4
+https://www.youtube.com/shorts/Aws2Id39JFU
+https://youtube.com/shorts/Aws2Id39JFU?feature=share
+*/
+
+function getVideoId(url) {
+	const urltypes = [
+		"https://www.youtube.com/watch?v=", //0
+		"https://www.youtube.com/shorts/",  //1
+		"https://youtube.com/shorts/",      //2
+		"https://youtu.be/"                 //3
+	];
+	
+	var maybeId = false;
+
+	for(var i=0; i<4; i++)
+		if(url.startsWith(urltypes[i]))
+			return url.substr(urltypes[i].length).substr(0, 11);
+	return "";
+}
+
+
+function createYouTube(url, w, h) {
+
+	return new Promise((resolve, reject) => {
+		// 2. This code loads the IFrame Player API code asynchronously.
+		var tag = document.createElement('script');
+		tag.src = "https://www.youtube.com/iframe_api";
+		var firstScriptTag = document.getElementsByTagName('script')[0];
+		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+		// 3. This function creates an <iframe> (and YouTube player)
+		//    after the API code downloads.
+		function onYouTubeIframeAPIReady() {
+			const player = new YT.Player('player', {
+		  		videoId: getVideoId(url),
+				playerVars: { 
+					//'playsinline': 1 
+				        'autoplay': 1,
+					'controls': 0,
+				},
+				width: w,
+				height: h,
+				events: {
+					'onReady': () => { resolve(player); }
+		  		}
+			});
+		}	
+		window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;			
+        });
+}
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
 	const start = async () => {
+
+      		//const player = await createYouTube("https://youtu.be/W4jRdyriODY", 1000, 1000*9/16);
+      		const player = await createYouTube("https://youtu.be/W4jRdyriODY", 1000, 1000*9/16);
+		player.seekTo(0);
+		player.pauseVideo();
 
 		//1. Ініціалізація MindAR
 		const mindarThree = new MindARThree({
@@ -16,83 +76,19 @@ document.addEventListener("DOMContentLoaded", () => {
 		const {renderer, cssRenderer, scene, cssScene, camera} = mindarThree;
 
 		//2. Створення об'єкту CSS
-		const obj = new CSS3DObject(document.querySelector("div#ar-div"));
+		const obj = new CSS3DObject(document.querySelector("#ar-div"));
 
 		//3. Прив'язати створений об'єкт до цільового зображення (маркеру)
 		const anchor = mindarThree.addCSSAnchor(0);
 		anchor.group.add(obj);
 
-      // 2. This code loads the IFrame Player API code asynchronously.
-      var tag = document.createElement('script');
-
-      tag.src = "https://www.youtube.com/iframe_api";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-      // 3. This function creates an <iframe> (and YouTube player)
-      //    after the API code downloads.
-      var player;
-      function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-          height: '1000',
-          width: '1000',
-          videoId: 'I8F3OtWNY',
-          playerVars: {
-            'playsinline': 1
-          },
-          events: {
-            'onReady': () => {         event.target.playVideo();
- }, //onPlayerReady,
-//            'onStateChange': onPlayerStateChange
-          }
-        });
-      }
-
-      // 4. The API will call this function when the video player is ready.
-/*
-      function onPlayerReady(event) {
-        event.target.playVideo();
-      }
-*/
-      // 5. The API calls this function when the player's state changes.
-      //    The function indicates that when playing a video (state=1),
-      //    the player should play for six seconds and then stop.
-/*
-      var done = false;
-      function onPlayerStateChange(event) {
-        if (event.data == YT.PlayerState.PLAYING && !done) {
-          setTimeout(stopVideo, 6000);
-          done = true;
-        }
-      }
-      function stopVideo() {
-        player.stopVideo();
-      }
- */
-
-		//3a. Створення програвача Vimeo
-   // 		var player = new Vimeo.Player(document.querySelector('iframe'));
-
 		anchor.onTargetFound = () => {
-			//play video
-			//player.playVideo();
+			player.playVideo();
 		}
 
 		anchor.onTargetLost = () => {
-			//pause video
 			player.pauseVideo();
 		}
-
-/*
-		player.setLoop(true).catch(() => {
-			console.log("Помилка зациклювання відео");
-		});
-
-
-		player.on('play', function() {
-			player.seekTo(0);
-    		});
-*/
 
 		//4. Запуск MindAR 
 		await mindarThree.start();
