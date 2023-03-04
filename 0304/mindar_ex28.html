@@ -1,0 +1,85 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script async src="https://unpkg.com/es-module-shims/dist/es-module-shims.js"></script>
+
+		<script type="importmap">
+		{
+		  "imports": {
+		    "three": "https://unpkg.com/three/build/three.module.js",
+		    "three/addons/": "https://unpkg.com/three/examples/jsm/",
+		    "mindar-face-three": "https://cdn.jsdelivr.net/npm/mind-ar/dist/mindar-face-three.prod.js"
+		  }
+		}
+		</script>
+		<script type="module" src="./ex28.js"></script>
+		<script data-consolejs-channel="8ea6fbce-d6dd-2dee-851a-61556b76a337" src="https://remotejs.com/agent/agent.js"></script>
+		<style>
+			html, body {
+				margin: 0;
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+				position: relative;
+			}
+			button#capture {
+				position: fixed;
+				bottom: 2vh;
+				left: 50%;
+				height: 12vw;
+				width: 12vw;
+				border: solid 2px;
+				border-radius: 50%;
+				transform: translateX(-50%);
+				z-index: 10;
+			}
+			#preview {
+				position: fixed;
+				z-index: 10;
+				left: 10%;
+				top: 10%;
+				height: 80%;
+				width: 80%;
+				border: solid 10px white;
+				visibility: hidden;
+			}
+			#preview-image {
+				height: 100%;
+				width: 100%;
+			}
+			#preview-close {
+				position: absolute;
+				font-size: 20px;
+				padding: 5px;
+				border: solid 5px white;
+				color: white;
+				right: -5px;
+				top: -5px;
+				cursor: pointer;
+			}
+			#preview-share {
+				border: solid 1px;
+				text-align: center;
+				cursor: pointer;
+				background: white;
+				position: absolute;
+				left: 50%;
+				transform: translateX(-50%);
+				bottom: 10px;
+				border: none;
+				border-radius: 10px;
+				padding: 10px 30px;
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<button id="capture"></button>
+		<div id="preview">
+			<div id="preview-close">X</div>
+			<img id="preview-image"/>
+			<div id="preview-share">Поширити</div>
+		</div>
+	</body>
+</html>
