@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
+
 		// створення сцени з червоним кубом розміром 5 см
 
 	        let scene = new THREE.Scene();
@@ -54,8 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		let currentSession = null; // ідентифікатор сеансу 
 
-		//console.log("We are here");
-
 		// визначення функції start
 		const start = async() => {
 			// запит сеансу доповненої реальності	
@@ -64,22 +63,19 @@ document.addEventListener("DOMContentLoaded", () => {
 				domOverlay: {root: document.body},
 			});
 
-			console.log(currentSession);
 			// повідомлення рушія Three.js про параметри використання WebXR
 			renderer.xr.enabled = true;
-			renderer.xr.setReferenceSpace("local");
+      			renderer.xr.setReferenceSpaceType("local");
 			await renderer.xr.setSession(currentSession);
+			arButton.textContent = "Завершити сесію WebXR";
 
-			console.log(renderer.xr);
 			renderer.setAnimationLoop(() => {
 			    renderer.render(scene, camera);
 			}); 
 		
-			arButton.textContent = "Завершити сесію WebXR";
-
 		}
 
-		// визначення функції end
+   		// визначення функції end
 		const end = async() => {
 			currentSession.end(); // завершення сеансу
 			renderer.setAnimationLoop(null);
@@ -98,3 +94,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	initialize(); // розпочати роботу
 });
+
