@@ -1,0 +1,41 @@
+<html>
+	<head>
+		<script src="diabetes.js"></script>
+	</head>
+	<body>
+		<table>
+		    <tbody>
+			<tr>
+			    <td> Age </td>
+			    <td> <input type="number" id="Age" value="40" /> </td>
+			</tr>
+			<tr>
+			    <td> Gender </td>
+			    <td> <div> <input type="radio" id="Gender_Male" name="Gender" value="Male" checked>
+      					<label for="Gender_Male">Male</label>
+				 </div>
+				<div> <input type="radio" id="Gender_Female" name="Gender" value="Female">
+      					<label for="Gender_Female">Female</label>
+				 </div>
+			 </td>
+			</tr>
+			<tr>
+			    <td> Довжина пелюстки </td>
+			    <td> <input type="number" id="PL" value="4.8"/> </td>
+			</tr>
+			<tr>
+			    <td> Ширина пелюстки </td>
+			    <td> <input type="number" id="PW" value="1.8"/> </td>
+			</tr>
+		    </tbody>
+		</table>
+
+		<p><button id="start">Донавчити нейронну мережу</button> &nbsp; 
+		<button id="download">Завантажити навчену модель</button>
+
+		<p><button id="count">Визначити клас</button>
+		<p><div id="text"></div>
+		<p><p><div id="log"></div>
+	</body>
+</html>
+
