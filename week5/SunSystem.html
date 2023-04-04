@@ -1,0 +1,26 @@
+<html>
+	<head>
+		<script src="../js/aframe/aframe.min.js"></script>
+		<script src="planet.js"></script>
+	</head>
+	<body>
+		<a-scene>
+			<a-sky color="black" radius="5000"></a-sky>
+			<a-camera position="0 0 300" cursor-visible="true" cursor-scale="2" cursor-color="#0095DD" cursor-opacity="0.5"></a-camera>
+			<a-entity geometry="primitive: sphere; radius: 20.510" material="src: 2k_sun.jpg" planet="dist: 0; mass: 1.989e30; name: Sun"></a-entity>
+			<a-entity geometry="primitive: sphere; radius: 2.4397" material="src: 2k_mercury.jpg" planet="dist: 57.910e9; mass: 3.285e23; T: 88; name: Mercury"></a-entity>
+			<a-entity geometry="primitive: sphere; radius: 6.0518" material="src: 2k_venus_surface.jpg" planet="dist: 108.208e9; mass: 4.8765e24; T: 224.701; name: Venus"></a-entity>
+			<a-entity geometry="primitive: sphere; radius: 6.371" material="src: 2k_earth_daymap.jpg" planet="dist: 149.598023e9; mass: 6e24; T: 365.256363004; name: Earth"></a-entity>
+			<a-entity geometry="primitive: sphere; radius: 3.3895" material="src: 2k_mars.jpg" planet="dist: 227.939366e9; mass: 6.4171e23; T: 686.980; name: Mars"></a-entity>
+			<a-entity geometry="primitive: sphere; radius: 69.911" material="src: 2k_jupiter.jpg" planet="dist: 778.479e9; mass: 1.8982e27; T: 4332.59; name: Jupiter"></a-entity>
+			<a-entity  planet="dist: 1433.53e9; mass: 5.6834e26; T: 10759.22; name: Saturn">
+				<a-entity geometry="primitive: sphere; radius: 58.232" material="src: 2k_saturn.jpg"></a-entity>
+				<a-ring rotation="65 0 0" src="2k_saturn_ring_alpha.png" radius-inner="66.9" radius-outer="180"></a-ring>
+			<a-entity>
+			<a-entity geometry="primitive: sphere; radius: 25.362" material="src: 2k_uranus.jpg" planet="dist: 2870.972e9; mass: 8.6810e25; T: 30688.5; name: Uranus"></a-entity>
+			<a-entity geometry="primitive: sphere; radius: 24.622" material="src: 2k_neptune.jpg" planet="dist: 4500e9; mass: 1.02413e26; T: 89666; name: Neptune"></a-entity>
+			<a-entity main></a-entity>
+		</a-scene>
+	</body>
+</html>
+
