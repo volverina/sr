@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>AR.js A-Frame Location-based</title>
+		<script data-consolejs-channel="19e9d45a-9ae3-58b1-b82c-6bc86a919ec3" src="https://remotejs.com/agent/agent.js"></script>
+
+<!--
+<script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+<script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/master/three.js/build/ar-threex-location-only.js'></script>
+<script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js'></script>
+-->
+		<script src="../js/three/three.js"></script>
+		<script src="../js/aframe/aframe.min.js"></script>
+		<script src='../js/arjs/ar-threex-location-only.js'></script>
+		<script src='../js/arjs/aframe-ar.js'></script>
+<!--
+		<script src='../js/arjs/aframe-ar-new-location-only.js'></script>
+		<script src='../js/arjs/aframe-ar-location-only.js'></script>-->
+		<script>
+			//console.log(THREE.Math.degToRad(180));
+			//console.log(THREE.MathUtils.degToRad(180));
+		</script>
+	</head>
+	<body>
+		<a-scene vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false" renderer="antialias: true; alpha: true">
+		    <a-camera gps-new-camera="gpsMinDistance: 5"></a-camera> 
+		    <a-box color="red" scale="10 10 10" gps-new-entity-place="latitude: 47.99890918042033; longitude: 33.482534224719885" ></a-box>
+		    <a-sphere color="green" scale="2 2 2" gps-new-entity-place="latitude: 47.998890335161846; longitude: 33.482858771989015" ></a-sphere>
+		    <a-sphere color="blue" scale="5 5 5" gps-new-entity-place="latitude: 47.99885982377868; longitude: 33.48241084311412" ></a-sphere>
+		    <a-box material="color: yellow" gps-new-entity-place="latitude: 47.99885982377868; longitude: 33.48241084311412" position="0 30 0"/>
+		</a-scene>
+	</body>
+</html>
+

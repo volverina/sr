@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>360-градусний огляд сцени</title>
+		<style>
+			body { margin: 0; }
+			button#start {
+				top: 50%;
+				left: 50%;
+				position: absolute;
+				transform: translateX(-50%);
+				font-size: 150%;
+				width: 33%;
+			}
+		</style>
+		<script type="importmap">
+  		{
+			"imports": {
+				"three": "../js/three/three.module.js"
+    			}
+  		}
+		</script>
+		<script type="module" src="code_fp.js"></script>
+	</head>
+	<body>
+		<video id="videoQ" hidden loop playsinline muted>
+			<source src="../assets/Q_without_powers.mkv">
+		</video>
+		<video id="videoToby" style="display:none" loop playsinline muted>
+			<source src="../assets/Toby_First_Mission.mkv">
+		</video>
+		<button id="start">Натисни на кнопку для початку програми</button>
+	</body>
+</html>
+
