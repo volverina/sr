@@ -7,11 +7,17 @@ var num_layers; // кількість шарів у мережі
 
 var nn_layers; // кількість нейронів на кожному шарі
 
-var W; // матриці вагових коефіцієнтів
+var F; // масив імен функцій активації та похідних для кожного шару
 
-var b; // масив вільних членів
+var g; // масив функцій активації для кожного шару
 
-var A; // значення кожного нейрону
+var dg; // масив похідних функцій активації для кожного шару
+
+var W, dW; // матриці вагових коефіцієнтів та їх похідних
+
+var b, db; // масив вільних членів та їх похідних
+
+var Z, A; // значення кожного нейрону: Z, A
 
 const lambda = 2.5; // коефіцієнт регуляризації
 
@@ -35,6 +41,20 @@ const make_matrix = (rows, columns, is_random) => {
   return arr;
 };
 
+
+// транспонування матриці
+function transpose(mtr)
+{
+	var num_row = mtr.length; 
+	var num_col = mtr[0].length;
+
+	var res = make_matrix(num_col, num_row);
+
+	for(let i=0; i<num_row; i++)
+		for(let j=0; j<num_col; j++)
+			res[j][i] = mtr[i][j];
+	return res;
+}
 
 // додавання матриць
 function add(m1, m2)
@@ -90,7 +110,7 @@ const mul = (m1, m2) => {
 
 
 // створення порожньої нейронної мережі
-const create_network = ((layers) => {
+const create_network = ((layers, func) => {
 	// перевірка на правильність заповнення масиву
 	if(layers.length < 2)
 	{
@@ -108,24 +128,41 @@ const create_network = ((layers) => {
 			return "";
 		}
 
-	nn_layers = layers;
+	nn_layers = deepCopy(layers);
+	F = deepCopy(func);
 	// створення масиву масивів значень нейронів у мережі
 	A = [];
-	// створення матриць вагових коефіцієнтів
+	Z = [];
+	// створення матриць вагових коефіцієнтів та їх похідних
 	W = [];
-	// створення масиву вільних членів
+	dW = [];
+	// створення масиву вільних членів та їх похідних
 	b = [];
+	db = [];
+	// створення масиву функцій активації для кожного шару
+	g = []; 
+	// створення масиву похідних функцій активації для кожного шару
+	dg = []; 
+
 	for(let i=0;i<num_layers-1;i++) // кількість матриць = кількість шарів - 1
 	{
 		var num_row = layers[i+1];
 		var num_col = layers[i];
 		W.push(make_matrix(num_row, num_col, true));
 		b.push(make_matrix(num_row, 1, false));
+		dW.push(make_matrix(num_row, num_col, true));
+		db.push(make_matrix(num_row, 1, false));
 	}
 	
 	for(let i=0;i<num_layers;i++) 
+	{
 		A.push(make_matrix(layers[i], 1, false));
+		Z.push(make_matrix(layers[i], 1, false));
+		g.push(get_g(func[i]));
+		dg.push(get_dg(func[i]));
+	}
 });
+
 
 
 //логістична функція
@@ -134,12 +171,101 @@ const sigma = ((z) => {
 });
 
 
+//похідна логістичної функції
+const dsigma = ((a) => {
+	return a*(1-a);
+});
+
+
+
+//лінійна функція
+const linear = ((z) => {
+	return z;
+});
+
+
+//лінійна функція - похідна
+const dlinear = ((a) => {
+	return 1;
+});
+
+
+//обмежена лінійна функція
+const ReLU = ((z) => {
+	return Math.max(0,z);
+});
+
+
+//обмежена лінійна функція - похідна
+const dReLU = ((a) => {
+	if(a>=0)
+		return 1;
+	else
+		return 0;
+});
+
+
+//обмежена лінійна функція с витоком
+const LeakyReLU = ((z) => {
+	return Math.max(0.01*z,z);
+});
+
+
+//обмежена лінійна функція с витоком - похідна
+const dLeakyReLU = ((z) => {
+	if(a>=0)
+		return 1;
+	else
+		return 0.01;
+});
+
+
+//гіперболічний тангенс 
+const tanh = ((z) => {
+	return (Math.exp(z) - Math.exp(-z))/(Math.exp(z) + Math.exp(-z));
+});
+
+
+//гіперболічний тангенс - похідна
+const dtanh = ((a) => {
+	return 1-a*a;
+});
+
+
+// масив співвідношень назв функцій та їх похідних
+const activation_functions = [
+	["sigma", sigma, dsigma],	
+	["linear", linear, dlinear],	
+	["relu", ReLU, dReLU],	
+	["leakyrelu", LeakyReLU, dLeakyReLU],	
+	["tanh", tanh, dtanh],	
+];
+
+
+function get_g(func_name)
+{
+	for(let i=0;i<activation_functions.length;i++)
+		if(func_name===activation_functions[i][0])
+			return activation_functions[i][1];
+	return "Не знайдена функція активації";
+}
+
+
+function get_dg(func_name)
+{
+	for(let i=0;i<activation_functions.length;i++)
+		if(func_name===activation_functions[i][0])
+			return activation_functions[i][2];
+	return "Не знайдена похідна функції активації";
+}
+
+
 // виконання активації для вектора Z
-const sigma_activation = ((Z) => {
+const activation = ((Z, func) => {
 	var result = Z;
 	for(let i=0;i<Z.length;i++)
 		for(let j=0;j<Z[0].length;j++)
-			result[i][j] = sigma(Z[i][j]);
+			result[i][j] = func(Z[i][j]);
 	return result;
 });
 
@@ -152,16 +278,62 @@ function forward(X) // predict
 		return "Bad input size";
 	// перший шар нейронів - вхід
 	for(let i=0;i<X.length;i++)
-		A[0][i][0] = X[i];
+	{
+		Z[0][i][0] = X[i];
+		A[0][i][0] = g[0](X[i]);
+	}
 	// обчислення шарів, розпочинаючи з першого прихованого
 	for(let i=1; i<num_layers; i++)
 	{
-		var Z = add( mul(W[i-1], A[i-1]), b[i-1]); // лінійна комбінація
-		A[i] = sigma_activation(Z); // активація вектора (матриця з 1 стовпцем)
+		Z[i] = add( mul(W[i-1], A[i-1]), b[i-1]); // лінійна комбінація
+		A[i] = activation(Z[i], g[i]); // активація вектора (матриця з 1 стовпцем)
 	}
 
 	return A[num_layers-1];
 }
+
+
+// обчислення значень похідних
+function backward(Y) // backpropagation: зворотнє поширення помилки
+{
+	// перевірка розмірність
+	if(Y.length !== nn_layers[num_layers-1])
+		return "Bad output size";
+	// останній шар нейронів - вихід
+
+	let Y_matrix = make_matrix(Y.length, 1);
+	for(let i=0;i<Y.length;i++)
+		Y_matrix[i][0] = Y[i];
+
+	// обчислення похідних, розпочинаючи з останнього шару
+	var dZ_last = sub(A[num_layers-1], Y_matrix); //помилка на останньому шарі: dz[2] = a[2] -y
+
+	dW[num_layers-2] = deepCopy(mul(dZ_last, transpose(A[num_layers-2]))); // dW[2] = dz[2] * a[1]T
+	db[num_layers-2] = deepCopy(dZ_last); // db[2] = dz[2]
+
+	let m = patterns.length;
+
+	for(let i=num_layers-3; i>=0; i--)
+	{
+		//console.log("i = ", i);
+
+		var diff = activation(Z[i+1], dg[i+1]);
+
+		dZ_last = deepCopy(mul(transpose(W[i+1]),dZ_last)); // * activation(Z[i], dg[i])
+
+		var dZ_last_copy = deepCopy(dZ_last);
+		for(let j=0;j<diff.length;j++)
+			dZ_last_copy[j][0] = dZ_last[j][0] * diff[j][0];
+		dZ_last = deepCopy(dZ_last_copy);
+
+		dW[i] = deepCopy(mul(dZ_last, transpose(A[i]))); 
+		db[i] = deepCopy(dZ_last);
+	}
+
+	return [dW, db];
+}
+
+
 
 
 // функція визначення втрат для логістичної регресії
@@ -327,6 +499,39 @@ const train_grad_desc_num_der = (patterns, alpha, max_epoch, epsilon) => {
 			b[i] = sub(b[i], mul_number(alpha, db_i));
 		}
 	
+		new_J = func_J(patterns, lambda);
+		console_log.innerHTML +=  ("На кроці " + epoch +" J = " + new_J);
+		console.log("На кроці " + epoch +" J = " + new_J);
+
+		if(new_J<epsilon) // при досягненні точності
+			break;
+	}	
+	return new_J;
+}
+
+
+// навчання мережі методом градієнтного спуску з аналітичними похідними
+// patterns - образи, на яких відбувається навчання
+// alpha - швидкість навчання
+// max_epoch - гранична кількість спроб навчання
+// epsilon - бажана точність навчання
+const train_grad_desc_an_der = (patterns, alpha, max_epoch, epsilon) => {
+	let new_J = epsilon+1;
+	let num_patters = patterns.length;
+	
+	for(let epoch = 0; epoch < max_epoch; epoch++) // ітерації спроб навчання
+	{
+		for(let k=0;k<num_patters;k++)
+		{
+			forward(patterns[k].x);
+			backward(patterns[k].y);
+			for(let i=0; i<num_layers-1; i++)
+			{
+				W[i] = sub(W[i], mul_number(alpha/num_patters, dW[i]));
+				b[i] = sub(b[i], mul_number(alpha/num_patters, db[i]));
+			}
+		}
+
 		new_J = func_J(patterns, lambda);
 		console_log.innerHTML +=  ("На кроці " + epoch +" J = " + new_J);
 		console.log("На кроці " + epoch +" J = " + new_J);
@@ -508,7 +713,11 @@ function getIris(p)
 
 let istrain = false;
 
-create_network([4, 9, 6, 3]); // створення 4-шарової мережі: на вході - 4, у 1 прихованому шарі - 9, у 2 прихованому шарі - 6, на виході - 3
+create_network([4, 9, 6, 3], ["linear", "sigma", "sigma", "sigma"]); // створення 4-шарової мережі: на вході - 4, у 1 прихованому шарі - 9, у 2 прихованому шарі - 6, на виході - 3; з сигмоїдальною функцією активації на усіх шарах, крім входу
+
+//var _y_hat = forward(patterns[0].x);
+//var _ders = backward(patterns[0].y);
+
 
 
 // створити та навчити нейронну мережу
@@ -524,10 +733,14 @@ const main = () => {
 	//console.log("Матриці вагових коефіцієнтів: ", W);
 	//console.log("Масив вільних членів: ", b);
 
-	// навчання методом градієнтного спуску з чисельними похідними на patterns з швидкістю 0.1, не більше ніж за 1000 ітерацій та з граничною точністю 0.000001
+	
 	let alpha = parseFloat(document.getElementById("alpha").value);
 
-	let J_after = train_grad_desc_num_der(patterns, alpha, 50, 0.000001);
+/*
+	let J_after = train_random (patterns, alpha, 50, 0.000001); // навчання методом Монте-Карло на patterns з швидкістю alpha, не більше ніж за 50 ітерацій та з граничною точністю 0.000001
+	let J_after = train_grad_desc_num_der(patterns, alpha, 50, 0.000001); // навчання методом градієнтного спуску з чисельними похідними на patterns з швидкістю alpha, не більше ніж за 50 ітерацій та з граничною точністю 0.000001
+*/
+	let J_after = train_grad_desc_an_der(patterns, alpha, 500, 0.000001); // навчання методом градієнтного спуску з аналітичними похідними на patterns з швидкістю alpha, не більше ніж за 500 ітерацій та з граничною точністю 0.000001
 
 	let num_err = 0;
 	// тестування навченості
@@ -603,13 +816,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		// модель
 		var model = {
 			model_layers: nn_layers,
+			model_func: F,
 			model_weights: [W, b]
 		};
 		
 		var str = JSON.stringify(model);
 
 		const link = document.createElement("a");
-		link.download = "model_iris.json";
+		link.download = "model_iris_F.json";
 		link.href = URL.createObjectURL(new Blob([str]));
 		link.click();
 	});
@@ -636,7 +850,27 @@ document.addEventListener("DOMContentLoaded", () => {
 			nn_layers = deepCopy(model.model_layers);
 			W = deepCopy(model.model_weights[0]);
 			b = deepCopy(model.model_weights[1]);
+			F = deepCopy(model.model_func);
 			istrain = true;
+
+			// створення масиву масивів значень нейронів у мережі
+			A = [];
+			Z = [];
+			// створення масиву функцій активації для кожного шару
+			g = []; 
+			// створення масиву похідних функцій активації для кожного шару
+			dg = []; 
+
+			for(let i=0;i<nn_layers.length;i++) 
+			{
+				A.push(make_matrix(nn_layers[i], 1, false));
+				Z.push(make_matrix(nn_layers[i], 1, false));
+				g.push(get_g(F[i]));
+				dg.push(get_dg(F[i]));
+			}
+			dW = deepCopy(W);
+			db = deepCopy(b);
+
 		};
 
 		reader.readAsText(file.files[0]);
@@ -722,30 +956,6 @@ function logistic_regression(patterns, alpha, maxEpoch, eps, output)
 }
 
 
-// дані
-
-const alpha=2; // швидкість навчання
-
-const maxEpoch = 10000; // максимальна кількість ітерацій
-
-const eps=0.00001; // точність (для збіжності процесу навчання)
-
-const numPatterns = 6; // кількість образів
-
-const sizeInput = 16; // кількість елементів у одному образі
-
-let res = logistic_regression(patterns, alpha, maxEpoch, eps, false);
-let w = res[0], b = res[1], J = res[2], epoch = res[3];
-
-console_log.innerHTML +=  ("Зроблено " + epoch +" кроків, помилка J = " + J);
-console_log.innerHTML +=  ("w = ", w);
-console_log.innerHTML +=  ("b = ", b);
-
-for(let i = 0; i < patterns.length; i++)
-{
-	let y_hat = predict(patterns[i].x, w, b);
-	console_log.innerHTML +=  ("Для образу ", patterns[i].x, " еталонний y = ", patterns[i].y, ", а обчислений = ", y_hat);
-}
 
 
 */
