@@ -1,0 +1,60 @@
+<html>
+	<head>
+		<script src="iris_ander.js"></script>
+	</head>
+	<body>
+		<table>
+		    <tbody>
+			<tr>
+			    <td> Довжина оцвітини </td>
+			    <td> <input type="number" id="SL" value="6.2" /> </td>
+			</tr>
+			<tr>
+			    <td> Ширина чашолистка </td>
+			    <td> <input type="number" id="SW" value="2.8"/> </td>
+			</tr>
+			<tr>
+			    <td> Довжина пелюстки </td>
+			    <td> <input type="number" id="PL" value="4.8"/> </td>
+			</tr>
+			<tr>
+			    <td> Ширина пелюстки </td>
+			    <td> <input type="number" id="PW" value="1.8"/> </td>
+			</tr>
+			<tr>
+			    <td> Кількість ітерацій </td>
+			    <td> <input type="number" id="numepoch" value="50"/> </td>
+			</tr>
+			<tr>
+			    <td> Точність </td>
+			    <td> <input type="number" id="epsilon" value="0.0001"/> </td>
+			</tr>
+			<tr>
+			    <td> Швидкість навчання </td>
+			    <td> <input type="number" id="alpha" value="0.5"/> </td>
+			</tr>
+			<tr>
+			    <td> Параметр регуляризації </td>
+			    <td> <input type="number" id="lambda" value="0.5"/> </td>
+			</tr>
+		    </tbody>
+		</table>
+
+		<p><button id="start">Донавчити нейронну мережу</button> &nbsp; 
+		<button id="download">Завантажити (download) навчену модель</button>
+
+		<form id="upload">
+			<label for="file">Файл моделі</label>
+			<input type="file" id="model" accept=".json">
+
+			<button>Вивантажити (upload) навчену модель</button>
+		</form>
+
+		<!--<button id="upload">Вивантажити (upload) навчену модель</button>-->
+
+		<p><button id="count">Визначити клас</button>
+		<p><div id="text"></div>
+		<p><p><div id="log"></div>
+	</body>
+</html>
+
