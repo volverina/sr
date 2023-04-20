@@ -72,15 +72,20 @@ document.addEventListener("DOMContentLoaded", () => {
 				{
 					if(hands[0].handedness=="Left")
 					{
-						leftHand.innerHTML = "Піднято ліву руку<br>" + finger(hands[0].keypoints);
+						let res = finger(hands[0].keypoints);
+						let what = get_gesture(res);
+						leftHand.innerHTML = "Піднято ліву руку<br>" + what;
 						rightHand.innerHTML = "";
 					}
 					else
 					{
-						rightHand.innerHTML = "Піднято праву руку<br>" + finger(hands[0].keypoints);
+						let res = finger(hands[0].keypoints);
+						let what = get_gesture(res);
+						rightHand.innerHTML = "Піднято праву руку<br>" + what;
 						leftHand.innerHTML = "";
 					}
 				}
+/*
 				if(hands.length == 2)
 				{
 					for (let h=0;h<2;h++)
@@ -89,6 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
 						else
 							rightHand.innerHTML = "Піднято праву руку<br>" + finger(hands[h].keypoints);
 				}
+*/
 			}
 			frameCount++;
 			window.requestAnimationFrame(detect);
@@ -104,12 +110,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	const finger = (keypoints) => {
-		let res= "";
+		let res= [];
 
 		const fingers = ["великий", "вказівний", "середній", "підмізинний", "мізинець"];
+		let fin_len_coord = [];
+
 
 		for(let i=0;i<fingers.length;i++)
 		{
+/*
 			let coords = [];
 			res+="<br>" + fingers[i] + " палець: [";
 			for(let p=0;p<4;p++)
@@ -124,14 +133,80 @@ document.addEventListener("DOMContentLoaded", () => {
 			let d23 = distance(coords[1], coords[2]);
 			let d24 = distance(coords[1], coords[3]);
 			let d34 = distance(coords[2], coords[3]);
-			res+=", відстані = 1-2: "+d12+", 1-3: "+d13+", 1-4: "+d14+", 2-3: "+d23+", 2-4: "+d24+", 3-4: "+d34;
-			if(d13+d34>d14)
-				res+=", зігнуто";
+			res+=", відстані = 1-2: "+d12+", 2-3: "+d23+", 3-4: "+d34+", 1-4: "+d34+", % = "+Math.round(100*d14 / (d12+d23+d34));
+			//if(d13+d34>d14)
+			//	res+=", зігнуто";
+			//else
+			//	res+=", не зігнуто";
+			*/
+			let coords = [];
+			for(let p=0;p<4;p++)
+				coords.push([keypoints[i*4+p+1].x, keypoints[i*4+p+1].y]);
+			let d12 = distance(coords[0], coords[1]);
+			let d14 = distance(coords[0], coords[3]);
+			let d23 = distance(coords[1], coords[2]);
+			let d34 = distance(coords[2], coords[3]);
+
+			let direction = "донизу";
+			if(coords[3][1] < coords[0][1])
+				direction = "вгору";
+			let percent = Math.round(100*d14 / (d12+d23+d34));
+			if (percent > 95) // прямий
+				res.push([fingers[i], "прямий", direction]);
 			else
-				res+=", не зігнуто";
+				if (percent < 70) // зігнутий
+					res.push([fingers[i], "зігнутий", direction]);
+				else
+					res.push([fingers[i], "напівзігнутий", direction]);
+
+			fin_len_coord.push([d14, coords[0], coords[3]]);
 		}
 
-		return res;
+		let angles = [];
+		for(let i=0;i<fin_len_coord.length-1;i++)
+		{
+			let fin1_start_x = fin_len_coord[i][1][0],
+			 fin1_start_y = fin_len_coord[i][1][1],
+			 fin1_end_x = fin_len_coord[i][2][0],
+			 fin1_end_y = fin_len_coord[i][2][1],
+
+			 fin2_start_x = fin_len_coord[i+1][1][0], 
+			 fin2_start_y = fin_len_coord[i+1][1][1],
+			 fin2_end_x = fin_len_coord[i+1][2][0],
+			 fin2_end_y = fin_len_coord[i+1][2][1];
+
+			let f1x = fin1_end_x-fin1_start_x, f1y = fin1_end_y-fin1_start_y;
+			let f2x = fin2_end_x-fin2_start_x, f2y = fin2_end_y-fin2_start_y;
+
+			angles.push(Math.round(Math.acos( (f1x * f2x + f1y * f2y) / (fin_len_coord[i][0] * fin_len_coord[i+1][0])) * 180 / Math.PI));
+		}
+
+		return [res, angles];
+	}
+
+
+	function get_gesture(fin) {
+		const fingers = ["великий", "вказівний", "середній", "підмізинний", "мізинець"];
+
+		//лайк чи дизлайк: великий палець прямий, інші - непрямі
+		if(fin[0][0][1]==="прямий" && fin[0][1][1]!=="прямий" && fin[0][2][1]!=="прямий" && fin[0][3][1]!=="прямий" && fin[0][4][1]!=="прямий")
+			if(fin[0][0][2]==="вгору")
+				return "вподобаємо";
+			else
+				return "не вподобаємо";
+		
+		//console.log(fin);
+		//перемога: вказівний та середній прямі, інші - непрямі, кут - 15 градусів
+		if(fin[0][0][1]!=="прямий" && 
+			fin[0][1][1]==="прямий" && fin[0][1][2]==="вгору" &&
+			fin[0][2][1]==="прямий" && fin[0][2][2]==="вгору" &&
+			fin[0][3][1]!=="прямий" && 
+			fin[0][4][1]!=="прямий" && 
+			fin[1][1]>=15)
+			return "перемога";
+
+		
+		return "жест не розпізнано";
 	}
 
 
