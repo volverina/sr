@@ -66,8 +66,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 
-		const GE = new fp.GestureEstimator([dieGesture, thumbsUpGesture]);
-
+		const GE = new fp.GestureEstimator([fp.Gestures.VictoryGesture, dieGesture, thumbsUpGesture]);
+/*
+		// add "✌🏻" and "👍" as sample gestures
+		const GE = new fp.GestureEstimator([
+		    fp.Gestures.VictoryGesture,
+		    fp.Gestures.ThumbsUpGesture
+		]);
+*/
 
 		//4. Запуск MindAR 
 		await mindarThree.start();
@@ -94,13 +100,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		mixer.addEventListener("finished", () => {
-			fadeToAction(actionIdle, 0.5);
+			fadeToAction(actionIdle, 0.2);
 		});
 
 
 		const video = mindarThree.video;
 
-		let skipCount = 5, frameCount = 1;
+		let skipCount = 2, frameCount = 1;
 
 		const detect = async () => {
 			if(actionActive !== actionIdle)
@@ -113,23 +119,30 @@ document.addEventListener("DOMContentLoaded", () => {
 			{
 				frameCount++;
 				window.requestAnimationFrame(detect);
+				return;
 			}
 
 			const hands = await model.estimateHands(video);
 			if(hands.length > 0)
 			{
 				// using a minimum match score of 8.5 (out of 10)
-				const estimatedGestures = GE.estimate(hands.landmarks, 7.5);
-				if(estimatedGestures.length > 0)
+				//console.log("hands.landmarks:", hands[0].landmarks);
+				const estimatedGestures = GE.estimate(hands[0].landmarks, 9);
+				console.log("estimatedGestures:", estimatedGestures);
+				if(estimatedGestures.gestures.length > 0)
 				{
+					console.log("gestures:", estimatedGestures.gestures);
 					const best = estimatedGestures.gestures.sort((g1, g2) => g2.confidence-g1.confidence)[0];
 					if(best.name === "thumbs_up")
-						fadeToAction(actionThumbsUp, 1);
+						fadeToAction(actionThumbsUp, 0.5);
 					else
 						if(best.name === "die")
-							fadeToAction(actionDie, 1);
+							fadeToAction(actionDie, 0.5);
+						else
+							if(best.name === "victory")
+								fadeToAction(actionDance, 0.5);
 				}
-				window.requestAnimationFrame(detect);
+				//window.requestAnimationFrame(detect);
 			}
 			window.requestAnimationFrame(detect);
 		}
