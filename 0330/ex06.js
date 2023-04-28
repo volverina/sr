@@ -1,6 +1,4 @@
 import * as THREE from 'three';
-//import * as THREE from '../js/three/three.module.js';
-//import {ARButton} from '../js/three/ARButton.js';
 import {ARButton} from "three/addons/webxr/ARButton.js"
 import {loadGLTF} from "../js/loader.js"
 
@@ -25,12 +23,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 		const m1 = await loadGLTF('../assets/plant.glb');
-//		const m2 = await loadGLTF('../assets/karaoke_piranha_plant.glb');
-//		const m3 = await loadGLTF('../assets/alarm_clock.glb');
-		const models = [m1]; //, m2, m3];
+		const m2 = await loadGLTF('../assets/karaoke_piranha_plant.glb');
+		//const m3 = await loadGLTF('../assets/alarm_clock.glb');
+		const m4 = await loadGLTF('../assets/headOccluder.glb');
+		const m5 = await loadGLTF('../assets/RobotExpressive.glb');
+		//const m6 = await loadGLTF('../assets/uploads_files_3685558_11-20.glb');
+
+
+		const models = [m1, m2, 
+			//m3, 
+			m4, m5, 
+			//m6
+			];
 		
-		//glasses.scene.scale.set(0.22, 0.22, 0.22);
-		console.log(models);
+		m1.scene.scale.set(0.15, 0.15, 0.15);
+		m2.scene.scale.set(0.002, 0.002, 0.002);
+		//m3.scene.scale.set(0.001, 0.001, 0.001);
+		m4.scene.scale.set(0.01, 0.01, 0.01);
+		m5.scene.scale.set(0.03, 0.03, 0.03);
+		//m6.scene.scale.set(0.045, 0.045, 0.045);
+		//m6.scene.rotation.y = -Math.PI/2;
 
 		const renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
 	        renderer.setSize(window.innerWidth, window.innerHeight);
@@ -47,32 +59,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	        document.body.appendChild(renderer.domElement);
 		document.body.appendChild(arButton);
-		console.log("arButton");
 
 		const controller = renderer.xr.getController(0);
         	scene.add(controller);
 
 		controller.addEventListener("select", () => {
-/*
-			console.log("select event start");
-			const cubegeometry = new THREE.BoxGeometry(0.10, 0.10, 0.10);
-			const cubematerial = new THREE.MeshBasicMaterial( {
-				color: 0xffffff * Math.random(), 
-				//transparent: true,
-				//opacity: 0.5
-			} );
-			const cube = new THREE.Mesh(cubegeometry, cubematerial);
-			cube.position.setFromMatrixPosition(reticle.matrix);
-			cube.scale.y = Math.random() * 2 + 1;
-			scene.add(cube);
-			console.log("select event end");
-*/
 			const number = Math.round(Math.random()*(models.length-1));
-			console.log("number = " + number);
-			const m = models[number];///.clone();
-			console.log(m);
-			m.matrix = reticle.matrix; ///??? how to update model's position?
-			// https://github.com/immersive-web/webxr-samples/blob/main/hit-test.html
+			const m = models[number].scene.clone();
+	    		m.position.setFromMatrixPosition(reticle.matrix);
 			scene.add(m);
 		});
 
@@ -95,10 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					reticle.matrix.fromArray(hitPose.transform.matrix);
 				}
 				else
-				{
-					//reticle.matrixAutoUpdate = false;
 					reticle.visible = false;
-				}
 			    	renderer.render(scene, camera);
 			}); 
 		});
