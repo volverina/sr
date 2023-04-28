@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<html>
+	<head>
+		<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+		<script src="./reticle.js"></script>
+		<style>
+			#overlay {
+				position: fixed;
+				top: 100px;
+				padding: 10px;
+				z-index: 1001;
+			}
+		</style>
+	</head>
+	<body>
+		<a-scene webxr="requiredFeatures: hit-test;
+                optionalFeatures: dom-overlay; referenceSpaceType: local;
+                overlayElement: #overlay;" background="transparent:true" ar-hit-test="target:#box;">
+			<a-box id="box" width="0.1" height="0.1" depth="0.1" color="#0000FF" visible="false"></a-box>
+			<a-ring reticle color="white" radius-inner="0.15" radius-outer="0.20" visible="false"></a-ring>
+		</a-scene>
+		<div id="overlay">
+			<h1>Текст поверх сцени</h1>
+		</div>
+	</body>
+</html>

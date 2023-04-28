@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<html>
+	<head>
+		<script data-consolejs-channel="5e9b73e9-e47d-2346-0fca-24db37d6a5e6" src="https://remotejs.com/agent/agent.js"></script>
+		<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+		<style>
+			#overlay {
+				position: fixed;
+				top: 100px;
+				padding: 10px;
+				z-index: 1001;
+			}
+		</style>
+	</head>
+	<body>
+		<a-scene webxr="requiredFeatures: hit-test;
+                optionalFeatures: dom-overlay; referenceSpaceType: local;
+                overlayElement: #overlay;" background="transparent:true" ar-hit-test="target:#cannabis;">
+			<a-assets>
+			    <a-asset-item id="narcos" src="../assets/plant.glb"></a-asset-item>
+			</a-assets>
+
+			<a-gltf-model id="cannabis" src="#narcos" scale="0.15 0.15 0.15"></a-gltf-model>
+		</a-scene>
+		<div id="overlay">
+			<h1>Текст поверх сцени</h1>
+		</div>
+	</body>
+</html>
