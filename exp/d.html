@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+	<a-sky color="black"></a-sky>
+	<a-sphere color="blue"  radius="6"></a-sphere> <!-- 1 item == 10000 km -- >
+	<!--- https://caps.gsfc.nasa.gov/simpson/kingswood/rings/ -->
+	<!--
+		D ring radius-inner = 2.472 Saturn radii 
+		D ring radius-outer = 2.472 Saturn radii +  0.126 Saturn radii
+		C ring radius-inner = 3.054 Saturn radii 
+		C ring radius-outer = 3.054 Saturn radii +   0.288  Saturn radii
+	-->
+
+	<a-ring color="green" radius-inner="18.324" radius-outer="20.052" material="side: double"></a-ring> <!-- C -->
+	
+	<a-ring color="white" radius-inner="14.832" radius-outer="15.588" material="side: double" src="../assets/earth.jpg"
+		animation="property: rotation; to: 360 0 0; loop: true; dur: 10000"></a-ring> <!-- D -->
+
+	<a-camera position="0 0 50" ></a-camera>
+    </a-scene>
+  </body>
+</html>
